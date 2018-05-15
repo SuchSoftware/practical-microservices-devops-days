@@ -16,7 +16,7 @@ const awesomeHardwiredDbConnectionString = 'postgres://pm:pm@pm_db:5432/pm'
 const db = createDb({ connectionString: awesomeHardwiredDbConnectionString })
 const eventStore = createEventStore({ db })
 const queries = createQueries({ db })
-const controllers = createControllers({ queries })
+const controllers = createControllers({ eventStore, queries })
 
 function attachContextToRequest(req, res, next) {
   req.context = {

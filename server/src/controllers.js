@@ -1,6 +1,6 @@
 const cuid = require('cuid')
 
-function createControllers({ queries }) {
+function createControllers({ eventStore, queries }) {
   function handleLogin(context, email, password) {
     console.log('handleLogin', { context, email })
 
