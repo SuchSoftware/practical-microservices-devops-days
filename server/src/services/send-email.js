@@ -1,6 +1,6 @@
 const messages = require('../messages')
 
-function createHandlers({ queries }) {
+function createHandlers({ eventStore }) {
   return {}
 }
 
