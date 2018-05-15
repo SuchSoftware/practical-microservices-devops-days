@@ -5,7 +5,7 @@ const commandTypes = {
 const commands = {
   sendEmail(correlationId, to, subject, body) {
     return {
-      correlationId,
+      correlation_id: correlationId,
       type: commandTypes.sendEmail,
       payload: {
         to,
@@ -27,14 +27,14 @@ const eventTypes = {
 const events = {
   emailSent(correlationId, emailType) {
     return {
-      correlationId,
+      correlation_id: correlationId,
       type: eventTypes.emailSent,
       payload: { emailType },
     }
   },
   userRegistered(correlationId, userId, email, password) {
     return {
-      correlationId,
+      correlation_id: correlationId,
       type: eventTypes.userRegistered,
       payload: {
         id: userId,
