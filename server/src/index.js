@@ -3,14 +3,18 @@ const cuid = require('cuid')
 const express = require('express')
 const path = require('path')
 
+const createUserCredentialsAggregator = require('./aggregators/user-credentials')
 const createControllers = require('./controllers')
 const createDb = require('./db')
+const createEventStore = require('./event-store')
 const createQueries = require('./queries')
+const createSendEmailService = require('./services/send-email')
 
 // ? Como se dice "for development only"?
 const awesomeHardwiredDbConnectionString = 'postgres://pm:pm@pm_db:5432/pm'
 
 const db = createDb({ connectionString: awesomeHardwiredDbConnectionString })
+const eventStore = createEventStore({ db })
 const queries = createQueries({ db })
 const controllers = createControllers({ queries })
 
@@ -21,6 +25,22 @@ function attachContextToRequest(req, res, next) {
 
   next()
 }
+
+// Set up aggregators
+const userCredentialsAggregator = createUserCredentialsAggregator({
+  db,
+  eventStore,
+})
+
+// Set up services
+const sendEmailService = createSendEmailService({
+  eventStore,
+})
+
+// Start the various things
+eventStore.start()
+sendEmailService.subscribeToStore()
+userCredentialsAggregator.subscribeToStore()
 
 // Set up the express app
 const app = express()
