@@ -1,5 +1,7 @@
 const cuid = require('cuid')
 
+const messages = require('./messages')
+
 function createControllers({ eventStore, queries }) {
   function handleLogin(context, email, password) {
     console.log('handleLogin', { context, email })
@@ -14,6 +16,24 @@ function createControllers({ eventStore, queries }) {
       password,
     }
 
+    const event = messages.events.userRegistered(
+      context.correlationId,
+      user.id,
+      user.email,
+      user.password,
+    )
+
+    const stream = `users:${user.id}`
+
+    const sendEmailCommand = messages.commands.sendEmail(
+      context.correlationId,
+      'registration',
+      user.email,
+      'Welcome to the site!!1!',
+      'We are so glad you are here',
+      user.id,
+    )
+
     return queries
       .findUserByEmail(email)
       .then(foundUser => {
@@ -23,7 +43,8 @@ function createControllers({ eventStore, queries }) {
           throw new Error('That email is already taken')
         }
       })
-      .then(() => queries.createUser(user))
+      .then(() => eventStore.emit(stream, [event]))
+      .then(() => eventStore.emit('users', [sendEmailCommand]))
       .then(() => user)
       .catch(e => {
         if (e.message !== 'That email is already taken') {

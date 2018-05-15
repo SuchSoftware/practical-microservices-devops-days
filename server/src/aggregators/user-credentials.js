@@ -1,11 +1,20 @@
 const messages = require('../messages')
 
 function createHandlers({ queries }) {
-  return {}
+  return {
+    users: {
+      [messages.eventTypes.userRegistered]: event =>
+        queries.createUser(event.payload),
+    },
+  }
 }
 
 function createQueries({ db }) {
-  return {}
+  function createUser(user) {
+    return db.client('users').insert(user)
+  }
+
+  return { createUser }
 }
 
 function createUserCredentialsAggregator({ db, eventStore }) {

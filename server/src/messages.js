@@ -3,7 +3,7 @@ const commandTypes = {
 }
 
 const commands = {
-  sendEmail(correlationId, to, subject, body) {
+  sendEmail(correlationId, emailType, to, subject, body, userId) {
     return {
       correlation_id: correlationId,
       type: commandTypes.sendEmail,
@@ -11,6 +11,8 @@ const commands = {
         to,
         subject,
         body,
+        userId,
+        emailType,
       },
       timestamp: new Date(),
     }
