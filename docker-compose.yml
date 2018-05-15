@@ -1,0 +1,19 @@
+version: '3'
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    command: npm start
+    volumes:
+      - ./server:/server
+    ports:
+      - "3000:3000"
+  pm_db:
+    build:
+      context: ./postgres
+      dockerfile: Dockerfile
+    env_file:
+      - ./postgres/db.env
+    ports:
+      - '0.0.0.0:5432:5432'
